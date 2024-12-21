@@ -1,58 +1,57 @@
+<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battery, IP Location, and Time API</title>
-    <script src="index.js"></script>
+    <title>Device Info</title>
     <style>
-        /* Add your styles here */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #282c34;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            font-family: Arial, sans-serif;
             text-align: center;
-            font-weight: 600;
+            margin-top: 50px;
+            background-color: #f4f4f4;
         }
-
-        .output {
-            font-size: 1.2rem;
-            margin-top: 30px;
-            text-align: center;
-            line-height: 1.6;
-        }
-
         .container {
-            background: linear-gradient(145deg, #1db954, #128c7e);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 10px 0;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        .info-item {
+            margin: 15px 0;
+            font-size: 20px;
+        }
+        .info-item span {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-
-    <h1>Battery, IP Location, and Current Time</h1>
-    
-    <div class="output">
-        <div class="container"><strong>Battery Status:</strong> <span id="batteryStatus">Loading...</span></div>
-        <div class="container"><strong>IP Location:</strong> <span id="ipLocation">Loading...</span></div>
-        <div class="container"><strong>Current Time:</strong> <span id="currentTime">Loading...</span></div>
+    <div class="container">
+        <h1>Device Information</h1>
+        <div class="info-item" id="battery">Battery: 0%</div>
+        <div class="info-item" id="location">Location: Unknown</div>
+        <div class="info-item" id="time">Time: 00:00</div>
+        <button onclick="getDeviceInfo()">Get Info</button>
     </div>
 
-    <footer>
-        <p>Created by <strong>MX-GΔMΞCØDΞR</strong> &copy; 2025</p>
-    </footer>
+    <script>
+        // This function fetches the data from the API and updates the page
+        async function getDeviceInfo() {
+            try {
+                const response = await fetch('/api/device-info');
+                const data = await response.json();
 
+                // Update the DOM with the received data
+                document.getElementById('battery').textContent = `Battery: ${data.batteryStatus.percent}%`;
+                document.getElementById('location').textContent = `Location: ${data.ipLocation.city}, ${data.ipLocation.country}`;
+                document.getElementById('time').textContent = `Time: ${data.currentTime}`;
+            } catch (error) {
+                console.error('Error fetching device info:', error);
+            }
+        }
+    </script>
 </body>
 </html>
