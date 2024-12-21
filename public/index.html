@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Link your JS file (client-side) here -->
-<script src="index.js"></script>
+    <script src="index.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Battery, IP Location, and Time API</title>
@@ -148,6 +147,7 @@
         <div class="container"><strong>Battery Status:</strong> <span id="batteryStatus">Loading...</span></div>
         <div class="container"><strong>IP Location:</strong> <span id="ipLocation">Loading...</span></div>
         <div class="container"><strong>Current Time:</strong> <span id="currentTime">Loading...</span></div>
+        <div class="container"><strong>Charging Status:</strong> <span id="chargingStatus">Loading...</span></div>
     </div>
 
     <div class="links">
@@ -168,9 +168,22 @@
         async function getBatteryStatus() {
             const battery = await navigator.getBattery();
             const batteryStatus = {
-                percent: battery.level * 100
+                percent: battery.level * 100,
+                charging: battery.charging // Added charging status
             };
+
+            // Set up event listeners to detect changes in charging status
+            battery.addEventListener('chargingchange', () => {
+                updateChargingStatus(battery.charging);
+            });
+
             return batteryStatus;
+        }
+
+        // Function to update charging status on UI
+        function updateChargingStatus(isCharging) {
+            const chargingStatusText = isCharging ? 'Charging' : 'Not Charging';
+            document.getElementById('chargingStatus').textContent = chargingStatusText;
         }
 
         // Function to get IP Location
@@ -208,6 +221,9 @@
 
             document.getElementById('currentTime').textContent = 
                 currentTime;
+
+            // Update initial charging status
+            updateChargingStatus(batteryStatus.charging);
         }
 
         // Automatically load the information when the page loads
